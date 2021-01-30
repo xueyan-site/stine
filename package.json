@@ -1,0 +1,51 @@
+{
+  "name": "xueyan-react-store",
+  "version": "1.0.0",
+  "author": "xueyan <yang@xueyan.site>",
+  "license": "MIT",
+  "description": "React Store Manage Tool",
+  "xueyan": "xueyan.json",
+  "main": "dist/lib",
+  "module": "dist/es",
+  "types": "dist/types",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xueyan-site/xueyan-react-store.git"
+  },
+  "keywords": [
+    "react",
+    "store",
+    "state",
+    "status",
+    "context",
+    "xueyan",
+    "typescript"
+  ],
+  "files": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "start": "yarn start-doc",
+    "build": "xueyan-typescript build",
+    "watch": "xueyan-typescript build --watch",
+    "start-doc": "xueyan-typescript start doc",
+    "build-doc": "xueyan-typescript build doc",
+    "serve-doc": "xueyan-typescript serve doc"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.12.5",
+    "eventemitter3": "^4.0.7",
+    "lodash": "^4.17.20"
+  },
+  "peerDependencies": {
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.168",
+    "@types/classnames": "^2.2.10",
+    "@types/react": "^16.9.49",
+    "react": "^16.13.1",
+    "typescript": "^4.0.3"
+  }
+}

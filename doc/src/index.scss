@@ -1,0 +1,34 @@
+@import 'normalize.css';
+
+html, body {
+  margin: 0;
+  padding: 0;
+  border: none;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Helvetica,
+    Arial,
+    "Microsoft YaHei",
+    sans-serif,
+    "Apple Color Emoji",
+    "Segoe UI Emoji";
+}
+
+html, body, #app {
+  width: 100vw;
+  height: 100vh;
+}
+
+.doc-tag {
+  height: 1.25em;
+  line-height: 1.25em;
+  padding: 0 0.3em;
+  box-sizing: content-box;
+  display: inline-block;
+  background-color: rgb(255, 174, 0, .2);
+  color: rgb(255, 174, 0);
+  margin-right: 0.3em;
+  border-radius: 0.2em;
+}

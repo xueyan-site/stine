@@ -1,0 +1,14 @@
+{
+  "type": "react-application",
+  "moduleAlias": {
+    "xueyan-react-store": "../src",
+    "react": "../node_modules/react",
+    "pages": "src/pages"
+  },
+  "startProxy": [
+    {
+      "path": "^/api",
+      "target": "https://xxx.com"
+    }
+  ]
+}

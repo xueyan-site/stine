@@ -1,16 +1,18 @@
 /**
  * @package xueyan-react-store
- * @author xueyan <yang@xueyan.site>
- * @description 包入口 package entry
+ * @author xueyan-site <yang@xueyan.site>
+ * @description package entry
  */
 
 export { default } from './store'
 
 export { getStore, getDataContext, getStoreContext } from './manager'
 
-export { useData, useStore, useCreateStore } from './hooks'
+export { useData, useStore, useStoreCreator } from './hooks'
 
 export { createProvider } from './providers'
+
+export { merge, deepEqual, shallowEqual, fullEqual } from './tools'
 
 export { STORE_EVENT_TYPE } from './constants'
 
@@ -20,6 +22,5 @@ export {
   EventListener,
   StoreOptions,
   StoreEventOptions,
-  SetDataOptions,
   ProvideComponentProps
 } from './types'

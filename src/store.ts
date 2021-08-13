@@ -9,9 +9,7 @@ import {
   SetStateAction
 } from 'react'
 import EventEmitter, { EventNames, EventArgs } from 'eventemitter3'
-import { get as getByPath } from 'lodash'
-import { COMPARE_METHOD_MAP, STORE_EVENT_TYPE } from './constants'
-import { pathListToString } from './tools'
+import { RANDOM_CHARS, COMPARE_METHOD_MAP, STORE_EVENT_TYPE } from './constants'
 import {
   setStore,
   deleteStore,
@@ -21,9 +19,8 @@ import {
 } from './manager'
 import {
   CompareFunction,
-  EventListener,
   StoreOptions,
-  SetDataOptions
+  CompareType
 } from './types'
 
 /**
@@ -31,24 +28,24 @@ import {
  */
 export default class Store<T_Data> extends EventEmitter {
   /**
-   * store类型
-   */
-  readonly type: string
-
-  /**
    * store ID
    */
   readonly id: string
 
   /**
-   * 默认数据
+   * store类型
    */
-  defaultData: T_Data
+  readonly type: string
+
+  /**
+   * 初始数据
+   */
+  initialData: T_Data
 
   /**
    * 比对算法，用于决定是否更新数据
    */
-  defaulCompareFunction: CompareFunction
+  defaulComparator: CompareFunction
 
   /**
    * 是否开启debug
@@ -58,42 +55,42 @@ export default class Store<T_Data> extends EventEmitter {
   /**
    * 上一次数据
    */
-  private __prevData__?: T_Data
+  protected __prevData__?: T_Data
 
   /**
    * 当前数据
    */
-  private __data__: T_Data
+  protected __data__: T_Data
 
   /**
    * 设置当前数据
    */
-  private __setData__: Dispatch<SetStateAction<T_Data>>
+  protected __setData__: Dispatch<SetStateAction<T_Data>>
 
   /**
    * 表示是否被使用过
    */
-  private __isUsed__?: boolean
+  protected __isUsed__?: boolean
 
   /**
    * 更新计数
    */
-  private __updateCount__: number
+  protected __updateCount__: number
 
   /**
    * 更新时使用的定时器
    */
-  private __updateTimer__?: any
+  protected __updateTimer__?: any
 
   /**
    * 当前数据的上下文
    */
-  private __storeContext__: Context<this>
+  protected __storeContext__: Context<this>
 
   /**
    * 当前数据的上下文
    */
-  private __dataContext__: Context<T_Data>
+  protected __dataContext__: Context<T_Data>
 
   /**
    * 获取数据
@@ -115,20 +112,16 @@ export default class Store<T_Data> extends EventEmitter {
    * @param type store的名字
    * @param defaultData store的默认数据
    */
-  constructor(type: string, defaultData: T_Data, options: StoreOptions = {}) {
+  constructor(type: string, initialData: T_Data, options: StoreOptions = {}) {
     super()
     /**
      * 初始化内部的成员变量
      */
     this.debug = options.debug
     this.type = type
-    this.id =
-      options.id ||
-      Math.random()
-        .toString(36)
-        .substring(2, 10) + Date.now().toString(36)
-    this.defaultData = defaultData
-    this.__data__ = defaultData
+    this.id = this.randomId()
+    this.initialData = initialData
+    this.__data__ = initialData
     this.__setData__ = () => {}
     this.__updateCount__ = 0
     /**
@@ -141,14 +134,30 @@ export default class Store<T_Data> extends EventEmitter {
      */
     const compare = options.compare
     if (compare && typeof compare === 'string') {
-      this.defaulCompareFunction = COMPARE_METHOD_MAP[compare]
+      this.defaulComparator = COMPARE_METHOD_MAP[compare]
     } else {
-      this.defaulCompareFunction = compare || COMPARE_METHOD_MAP.deep
+      this.defaulComparator = compare || COMPARE_METHOD_MAP.deep
     }
     /**
      * 设置监听器
      */
     initStoreEvent(this, options)
+  }
+
+  /**
+   * 生成随机数
+   * @param length 随机数的长度
+   * @returns 
+   */
+  randomId(length: number = 16) {
+    let current = ''
+    const MAX = RANDOM_CHARS.length
+    for (let i = 0; i < length; i++) {
+      current += RANDOM_CHARS.charAt(
+        Math.floor(Math.random() * MAX)
+      )
+    }
+    return current
   }
 
   /**
@@ -170,69 +179,22 @@ export default class Store<T_Data> extends EventEmitter {
   }
 
   /**
-   * 监听某一路径的变化
-   * @param path
-   * @param watcher
-   */
-  watch(path: string, watcher: EventListener | EventListener[]) {
-    let eventType = `path:${path}`
-    if (typeof watcher === 'function') {
-      this.on(eventType, watcher, this)
-    } else {
-      watcher.forEach(subItem => {
-        this.on(eventType, subItem)
-      })
-    }
-  }
-
-  /**
-   * 监听某一路径的变化（仅生效一次）
-   * @param path
-   * @param watcher
-   */
-  watchOnce(path: string, watcher: EventListener | EventListener[]) {
-    let eventType = `path:${path}`
-    if (typeof watcher === 'function') {
-      this.once(eventType, watcher, this)
-    } else {
-      watcher.forEach(subItem => {
-        this.once(eventType, subItem)
-      })
-    }
-  }
-
-  /**
-   * 移除对某一路径的监听
-   * @param path
-   * @param watcher
-   */
-  removeWatch(
-    path: string,
-    watcher?: EventListener,
-    once?: boolean | undefined
-  ) {
-    this.off(`path:${path}`, watcher, this, once)
-  }
-
-  /**
    * 设置数据
    */
-  setData(data: T_Data, { compare, emitPath }: SetDataOptions = {}): boolean {
+  set(data: T_Data, compare?: CompareType): boolean {
     /**
      * 获取对比方法
      */
     let currCompare: CompareFunction
     if (typeof compare === 'string') {
-      currCompare = COMPARE_METHOD_MAP[compare] || this.defaulCompareFunction
+      currCompare = COMPARE_METHOD_MAP[compare] || this.defaulComparator
     } else {
-      currCompare = compare || this.defaulCompareFunction
+      currCompare = compare || this.defaulComparator
     }
     /**
-     * 对比两者是否存在改动
-     * 若无，则无需继续
+     * 对比两者是否存在改动，若无，则无需继续
      */
-    const diff: string[][] = []
-    if (currCompare(data, this.__data__, diff)) {
+    if (currCompare(data, this.__data__)) {
       return false
     }
     const prevData = this.__data__
@@ -253,50 +215,21 @@ export default class Store<T_Data> extends EventEmitter {
       this.__updateCount__ += 1
       this.__updateTimer__ = undefined
     }, 7)
-    /**
-     * 由内而外，发出某一节点改动的消息
-     */
-    if (emitPath !== false) {
-      const emittedPathMap: { [prop: string]: boolean } = {}
-      diff.forEach(pathList => {
-        for (let i = pathList.length; i > 0; i--) {
-          const nodePathList = pathList.slice(0, i)
-          const nodePathString = pathListToString(nodePathList)
-          if (!emittedPathMap[nodePathString]) {
-            emittedPathMap[nodePathString] = true
-            this.emit(`path:${nodePathString}`, {
-              data,
-              prevData,
-              store: this,
-              node: getByPath(data, nodePathString),
-              prevNode: getByPath(prevData, nodePathString),
-              pathList: nodePathList,
-              pathString: nodePathString
-            })
-          }
-        }
-      })
-    }
     return true
   }
 
   /**
-   * 设置部分数据
+   * 更新部分数据
    */
-  setPartData(partData: Partial<T_Data>, options?: SetDataOptions): boolean {
-    return this.setData({ ...this.__data__, ...partData }, options)
+  setPart(partData: T_Data, compare?: CompareType): boolean {
+    return this.set({ ...this.__data__, ...partData }, compare)
   }
 
   /**
    * 重置数据
    */
-  resetData(partData?: Partial<T_Data>, options?: SetDataOptions): boolean {
-    const data = { ...this.defaultData, ...partData }
-    const isUpdated = this.setData(data, options)
-    if (isUpdated) {
-      this.defaultData = data
-    }
-    return isUpdated
+  reset(partData?: Partial<T_Data>, compare?: CompareType): boolean {
+    return this.set({ ...this.initialData, ...partData }, compare)
   }
 
   /**
@@ -311,7 +244,7 @@ export default class Store<T_Data> extends EventEmitter {
    * 一个实例只能被用于一处，不能被多次使用  
    */
   readonly useStore = (): [T_Data, this] => {
-    const [data, setData] = useState<T_Data>(this.defaultData)
+    const [data, setData] = useState<T_Data>(this.initialData)
     this.__data__ = data
     this.__setData__ = setData
     /**
@@ -321,9 +254,7 @@ export default class Store<T_Data> extends EventEmitter {
     useEffect(() => {
       setStore(this)
       if (this.__isUsed__) {
-        throw new Error(
-          'Store的数据只能被供应一次，该Store的数据存在多处供应点，请检查您的代码并改正'
-        )
+        throw new Error(`store ${this.id} cannot be supplied more than once`)
       } else {
         this.__isUsed__ = true
       }
@@ -338,7 +269,7 @@ export default class Store<T_Data> extends EventEmitter {
         })
         this.removeAllListeners()
         this.__updateCount__ === 0
-        this.__data__ = this.defaultData
+        this.__data__ = this.initialData
         this.__prevData__ = undefined
         this.__setData__ = () => {}
         deleteStore(this)

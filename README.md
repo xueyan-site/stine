@@ -1,56 +1,55 @@
 # xueyan-react-store
 
-xueyan-react-store 是一个 react 状态管理工具。  
-xueyan-react-store is a react store manage tool.  
+`xueyan-react-store` is a react store manage tool.  
 
-本包创建自 xueyan <yang@xueyan.site>。  
-The project created by xueyan <yang@xueyan.site>.  
+- [xueyan-react-store](#xueyan-react-store)
+  - [Why use it](#why-use-it)
+  - [What are its highlights](#what-are-its-highlights)
+  - [How to use it](#how-to-use-it)
+  - [Interface](#interface)
+  - [Develop](#develop)
+  - [Appendix](#appendix)
 
-## 下载 Install
+## Why use it
 
-```bash
-# 如果你使用的是NPM：
-# if you use NPM: 
-npm i xueyan-react-store
+## What are its highlights
 
-# 如果你使用的是Yarn：
-# if you use Yarn: 
-yarn add xueyan-react-store
-```
-
-## 示例 Example
+## How to use it
 
 ```ts
-import React, { useRef } from 'react'
+import React from 'react'
 import Store, { createProvider, useData, useStore } from 'xueyan-react-store'
 
-interface Props {
+interface Data {
   a: string
 }
 
-interface Data {
-  b: string
+const Provider = createProvider(
+  (props: Data) => new Store<Data>('k', props)
+)
+
+function Received() {
+  const data = useData<Data>('k')
+  const store = useStore<Store<Data>>('k')
+  return <div>{store.type}: {data.a}</div>
 }
 
-const DataProvider = createProvider((props: Props) => {
-  return new Store<Data>('store', {
-    b: props.a
-  }, {
-    debug: true
-  })
-})
-
-function DataReceived() {
-  const store = useStore<Store<Data>>('store')
-  const data = useData<Data>('store')
-  return <div>{store.type} {data.b}</div>
-}
-
-export default () => {
+function App() {
   return (
-    <DataProvider a="this is data">
-      <DataReceived />
-    </DataProvider>
+    <Provider a="this is data">
+      <Received />
+    </Provider>
   )
 }
 ```
+
+## Interface
+
+## Develop
+
+Please make sure that `Node` and `NPM` are installed on your computer, and `xueyan-typescript-cli` is installed globally. After switching current work path to this project root in CMD, you can run command `yarn start`.
+
+## Appendix
+
+author - xueyan-site <yang@xueyan.site>  
+builder - [xueyan-typescript-cli](https://github.com/xueyan-site/xueyan-typescript-cli)  

@@ -19,3 +19,8 @@ export enum STORE_EVENT_TYPE {
   RENDERED = 'rendered', // 渲染成功（每次渲染后都会执行，即创建+更新）
   DESTROY_BEFORE = 'destroyBefore' // 销毁之前
 }
+
+/**
+ * 随机字符集
+ */
+export const RANDOM_CHARS = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz'

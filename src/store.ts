@@ -1,14 +1,11 @@
 import {
   useContext,
   createElement,
-  PropsWithChildren,
   useState,
   useEffect,
-  Context,
-  Dispatch,
-  SetStateAction
+  Context
 } from 'react'
-import EventEmitter, { EventNames, EventArgs } from 'eventemitter3'
+import EventEmitter from 'eventemitter3'
 import { RANDOM_CHARS, COMPARE_METHOD_MAP, STORE_EVENT_TYPE } from './constants'
 import {
   setStore,
@@ -17,11 +14,9 @@ import {
   ensureDataContext,
   ensureStoreContext
 } from './manager'
-import {
-  CompareFunction,
-  StoreOptions,
-  CompareType
-} from './types'
+import type { Dispatch, SetStateAction, PropsWithChildren } from 'react'
+import type { EventNames, EventArgs } from 'eventemitter3'
+import type { CompareFunction, StoreOptions, CompareType } from './types'
 
 /**
  * 通用的状态管理器

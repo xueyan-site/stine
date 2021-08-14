@@ -16,7 +16,7 @@ export { merge, deepEqual, shallowEqual, fullEqual } from './tools'
 
 export { STORE_EVENT_TYPE } from './constants'
 
-export {
+export type {
   CompareFunction,
   CompareType,
   EventListener,

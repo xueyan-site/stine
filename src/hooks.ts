@@ -1,6 +1,6 @@
 import { useContext, useMemo } from 'react'
-import Store from './store'
 import { ensureStoreContext, ensureDataContext } from './manager'
+import type Store from './store'
 
 /**
  * 使用数据（仅在上层有store供应时）

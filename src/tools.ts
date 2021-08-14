@@ -1,4 +1,4 @@
-import { CompareFunction } from './types'
+import type { CompareFunction } from './types'
 
 /**
  * 对两个参数进行全等比较

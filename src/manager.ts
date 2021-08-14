@@ -1,7 +1,7 @@
 import { Context, createContext } from 'react'
-import Store from './store'
-import { StoreEventOptions } from './types'
 import { STORE_EVENT_TYPE } from './constants'
+import type Store from './store'
+import type { StoreEventOptions } from './types'
 
 /**
  * 在初始化时设置监听器

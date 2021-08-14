@@ -1,5 +1,5 @@
-import Store from './Store'
-import { COMPARE_METHOD_MAP } from './constants'
+import type Store from './Store'
+import type { COMPARE_METHOD_MAP } from './constants'
 
 /**
  * 比对算法类型

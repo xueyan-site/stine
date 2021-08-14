@@ -1,13 +1,12 @@
 import {
-  forwardRef,
-  useImperativeHandle,
   useRef,
-  ComponentType,
-  PropsWithChildren,
+  useImperativeHandle,
+  forwardRef,
   createElement
 } from 'react'
 import Store from './store'
-import { ProvideComponentProps } from './types'
+import type { ComponentType, PropsWithChildren } from 'react'
+import type { ProvideComponentProps } from './types'
 
 /**
  * 创建一个供应器

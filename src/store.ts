@@ -14,7 +14,7 @@ import {
   ensureDataContext,
   ensureStoreContext
 } from './manager'
-import type { Dispatch, SetStateAction, PropsWithChildren } from 'react'
+import type { Dispatch, SetStateAction, ReactNode } from 'react'
 import type { EventNames, EventArgs } from 'eventemitter3'
 import type { CompareFunction, StoreOptions, CompareType } from './types'
 
@@ -300,7 +300,14 @@ export default class Store<T_Data> extends EventEmitter {
   readonly Provider = ({
     children,
     ...props
-  }: PropsWithChildren<{ [props: string]: any }>) => {
+  }: {
+    [props: string]: any,
+    children?: ReactNode | ((props: { 
+      [props: string]: any,
+      store: Store<T_Data>,
+      data: T_Data
+    }) => ReactNode | undefined)
+  }) => {
     const [data] = this.useStore()
     return createElement(
       this.__storeContext__.Provider,

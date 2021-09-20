@@ -216,7 +216,7 @@ export default class Store<T_Data> extends EventEmitter {
   /**
    * 更新部分数据
    */
-  setPart(partData: T_Data, compare?: CompareType): boolean {
+  setPart(partData: Partial<T_Data>, compare?: CompareType): boolean {
     return this.set({ ...this.__data__, ...partData }, compare)
   }
 

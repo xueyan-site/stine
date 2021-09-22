@@ -12,7 +12,7 @@ export { useData, useStore, useStoreCreator } from './hooks'
 
 export { createProvider } from './providers'
 
-export { merge, deepEqual, shallowEqual, fullEqual } from './tools'
+export { deepEqual, shallowEqual, fullEqual, random, merge } from './tools'
 
 export { STORE_EVENT_TYPE } from './constants'
 

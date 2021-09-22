@@ -1,16 +1,17 @@
+import { RANDOM_CHARS } from './constants'
 import type { CompareFunction } from './types'
 
 /**
- * 对两个参数进行全等比较
+ * All-equal comparison of two parameters
  */
 export const fullEqual: CompareFunction = (a: any, b: any): boolean => {
   return a === b ? a !== 0 || b !== 0 || 1 / a === 1 / b : a !== a && b !== b
 }
 
 /**
- * 对两个参数进行浅等比较
+ * A shallow equal comparison of two parameters
  *
- * 注：以`_`开头命名的属性，会在比较时被忽略
+ * Note: Attributes named starting with `_` will be ignored in the comparison
  */
 export const shallowEqual: CompareFunction = (a: any, b: any): boolean => {
   if (fullEqual(a, b)) {
@@ -35,9 +36,9 @@ export const shallowEqual: CompareFunction = (a: any, b: any): boolean => {
 }
 
 /**
- * 对两个值进行深等比较
+ * Compare two values in depth
  *
- * 注：以`_`开头命名的属性，会在比较时被忽略
+ * Note: Attributes named starting with `_` will be ignored in the comparison
  */
 export const deepEqual: CompareFunction = (a: any, b: any): boolean => {
   if (fullEqual(a, b)) {
@@ -62,7 +63,24 @@ export const deepEqual: CompareFunction = (a: any, b: any): boolean => {
 }
 
 /**
- * 对data中为null或者undefined的字段，设置默认值
+ * Generate random string
+ * 
+ * @param length Length of the random string
+ * @returns 
+ */
+export function random(length: number = 16) {
+  const MAX = RANDOM_CHARS.length
+  let current = ''
+  for (let i = 0; i < length; i++) {
+    current += RANDOM_CHARS.charAt(
+      Math.floor(Math.random() * MAX)
+    )
+  }
+  return current
+}
+
+/**
+ * Set default values for fields in data that are null or undefined
  *
  * ```typescript
  * merge(

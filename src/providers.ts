@@ -9,7 +9,7 @@ import type { ComponentType, PropsWithChildren } from 'react'
 import type { ProvideComponentProps } from './types'
 
 /**
- * 创建一个供应器
+ * Create a Provider
  * @param createStore
  */
 export function createProvider<T_Store extends Store<any>, T_Props = {}>(

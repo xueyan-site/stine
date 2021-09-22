@@ -6,7 +6,7 @@ import {
   Context
 } from 'react'
 import EventEmitter from 'eventemitter3'
-import { RANDOM_CHARS, COMPARE_METHOD_MAP, STORE_EVENT_TYPE } from './constants'
+import { COMPARE_METHOD_MAP, STORE_EVENT_TYPE } from './constants'
 import {
   setStore,
   deleteStore,
@@ -14,12 +14,13 @@ import {
   ensureDataContext,
   ensureStoreContext
 } from './manager'
+import { random } from './tools'
 import type { Dispatch, SetStateAction, ReactNode } from 'react'
 import type { EventNames, EventArgs } from 'eventemitter3'
 import type { CompareFunction, StoreOptions, CompareType } from './types'
 
 /**
- * 通用的状态管理器
+ * Universal status manager
  */
 export default class Store<T_Data> extends EventEmitter {
   /**
@@ -28,84 +29,84 @@ export default class Store<T_Data> extends EventEmitter {
   readonly id: string
 
   /**
-   * store类型
+   * store type
    */
   readonly type: string
 
   /**
-   * 初始数据
+   * Initial data
    */
   initialData: T_Data
 
   /**
-   * 比对算法，用于决定是否更新数据
+   * Comparison algorithm for deciding whether to update the data
    */
   defaulComparator: CompareFunction
 
   /**
-   * 是否开启debug
+   * Whether to enable debug
    */
   debug?: boolean
 
   /**
-   * 上一次数据
+   * Previous data
    */
   protected __prevData__?: T_Data
 
   /**
-   * 当前数据
+   * current data
    */
   protected __data__: T_Data
 
   /**
-   * 设置当前数据
+   * handler for set current data
    */
   protected __setData__: Dispatch<SetStateAction<T_Data>>
 
   /**
-   * 表示是否被使用过
+   * indicates if it has been used
    */
   protected __isUsed__?: boolean
 
   /**
-   * 更新计数
+   * Update Count
    */
   protected __updateCount__: number
 
   /**
-   * 更新时使用的定时器
+   * Timer used when updating
    */
   protected __updateTimer__?: any
 
   /**
-   * 当前数据的上下文
+   * Context of current store
    */
   protected __storeContext__: Context<this>
 
   /**
-   * 当前数据的上下文
+   * Context of current data
    */
   protected __dataContext__: Context<T_Data>
 
   /**
-   * 获取数据
+   * get previous data
    */
   get prevData(): T_Data | undefined {
     return this.__prevData__
   }
 
   /**
-   * 获取数据
+   * get current data
    */
   get data(): T_Data {
     return this.__data__
   }
 
   /**
-   * 创建一个Store
+   * create a store
    *
-   * @param type store的名字
-   * @param defaultData store的默认数据
+   * @param type store type
+   * @param initialData initial data
    */
   constructor(type: string, initialData: T_Data, options: StoreOptions = {}) {
     super()
@@ -114,7 +115,7 @@ export default class Store<T_Data> extends EventEmitter {
      */
     this.debug = options.debug
     this.type = type
-    this.id = this.randomId()
+    this.id = random()
     this.initialData = initialData
     this.__data__ = initialData
     this.__setData__ = () => {}
@@ -140,23 +141,7 @@ export default class Store<T_Data> extends EventEmitter {
   }
 
   /**
-   * 生成随机数
-   * @param length 随机数的长度
-   * @returns 
-   */
-  randomId(length: number = 16) {
-    let current = ''
-    const MAX = RANDOM_CHARS.length
-    for (let i = 0; i < length; i++) {
-      current += RANDOM_CHARS.charAt(
-        Math.floor(Math.random() * MAX)
-      )
-    }
-    return current
-  }
-
-  /**
-   * 重写emit方法
+   * emit event
    */
   emit<T extends EventNames<string | symbol>>(
     event: T,
@@ -174,7 +159,7 @@ export default class Store<T_Data> extends EventEmitter {
   }
 
   /**
-   * 设置数据
+   * set data
    */
   set(data: T_Data, compare?: CompareType): boolean {
     /**
@@ -214,29 +199,29 @@ export default class Store<T_Data> extends EventEmitter {
   }
 
   /**
-   * 更新部分数据
+   * update part data
    */
   setPart(partData: Partial<T_Data>, compare?: CompareType): boolean {
     return this.set({ ...this.__data__, ...partData }, compare)
   }
 
   /**
-   * 重置数据
+   * reset current data
    */
   reset(partData?: Partial<T_Data>, compare?: CompareType): boolean {
     return this.set({ ...this.initialData, ...partData }, compare)
   }
 
   /**
-   * 使用数据（仅在上层有Context的供应器）
+   * Use data (only the provider with Context in the upper layer)
    */
   readonly useData = (): T_Data => {
     return useContext(this.__dataContext__)
   }
 
   /**
-   * 直接获取当前store的数据  
-   * 一个实例只能被用于一处，不能被多次使用  
+   * Get the data of the current store  
+   * An instance can only be used in one place and cannot be used more than once  
    */
   readonly useStore = (): [T_Data, this] => {
     const [data, setData] = useState<T_Data>(this.initialData)
@@ -295,7 +280,7 @@ export default class Store<T_Data> extends EventEmitter {
   }
 
   /**
-   * 提供数据（Context的供应器）
+   * Provisioning data
    */
   readonly Provider = ({
     children,

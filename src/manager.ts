@@ -4,7 +4,7 @@ import type Store from './store'
 import type { StoreEventOptions } from './types'
 
 /**
- * 在初始化时设置监听器
+ * Set the listener at initialization time
  *
  * @param store
  * @param options
@@ -31,12 +31,12 @@ export const initStoreEvent = <T_Store extends Store<any>>(
 }
 
 /**
- * store实例的收集器
+ * Collector for store instances
  */
 const storeMap = new Map<string, Store<any>>()
 
 /**
- * 获取已生成的store实例
+ * Get the generated store instance
  * @param storeId
  */
 export const getStore = <T_Store extends Store<any>>(
@@ -46,7 +46,7 @@ export const getStore = <T_Store extends Store<any>>(
 }
 
 /**
- * 设置已生成的store实例
+ * Set the generated store instance
  * @param storeId
  */
 export const setStore = <T_Store extends Store<any>>(store: T_Store): void => {
@@ -54,7 +54,7 @@ export const setStore = <T_Store extends Store<any>>(store: T_Store): void => {
 }
 
 /**
- * 删除已生成的store实例
+ * Delete the generated store instance
  * @param storeId
  */
 export const deleteStore = <T_Store extends Store<any>>(
@@ -64,12 +64,12 @@ export const deleteStore = <T_Store extends Store<any>>(
 }
 
 /**
- * store context的收集器
+ * Collector for store context
  */
 const storeContextMap = new Map<string, Context<any>>()
 
 /**
- * 获取store实例上下文
+ * Get store instance context
  * @param storeType
  */
 export const getStoreContext = <T_Store extends Store<any>>(
@@ -79,7 +79,7 @@ export const getStoreContext = <T_Store extends Store<any>>(
 }
 
 /**
- * 获取store实例上下文
+ * Get store instance context (create if none)
  * @param storeType
  */
 export const ensureStoreContext = <T_Store extends Store<any>>(
@@ -95,12 +95,12 @@ export const ensureStoreContext = <T_Store extends Store<any>>(
 }
 
 /**
- * data context的收集器
+ * Collector for data context
  */
 const dataContextMap = new Map<string, Context<any>>()
 
 /**
- * 获取store数据上下文
+ * Get store data context
  * @param storeType
  */
 export const getDataContext = <T_Data>(
@@ -110,7 +110,7 @@ export const getDataContext = <T_Data>(
 }
 
 /**
- * 获取store数据上下文（没有则创建）
+ * Get store data context (create if none)
  * @param storeType
  */
 export const ensureDataContext = <T_Data>(

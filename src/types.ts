@@ -2,22 +2,22 @@ import type Store from './Store'
 import type { COMPARE_METHOD_MAP } from './constants'
 
 /**
- * 比对算法类型
+ * Comparison algorithm define
  */
 export type CompareFunction = (a: any, b: any) => boolean
 
 /**
- * 比对算法类型
+ * Comparison algorithm type
  */
 export type CompareType = keyof typeof COMPARE_METHOD_MAP | CompareFunction
 
 /**
- * 事件处理器类型
+ * event listener define
  */
 export type EventListener = (...args: any[]) => void
 
 /**
- * Store事件相关的初始化选项
+ * Store event-related initialization options
  */
 export interface StoreEventOptions {
   onCreated?: EventListener
@@ -28,7 +28,7 @@ export interface StoreEventOptions {
 }
 
 /**
- * Store的初始化选项
+ * Store's initialization options
  */
 export interface StoreOptions extends StoreEventOptions {
   debug?: boolean // 是否开启debug（若开启，则在抛事件的时候，会打印数据）
@@ -36,7 +36,7 @@ export interface StoreOptions extends StoreEventOptions {
 }
 
 /**
- * 提供给供应器的component的props
+ * The props of Component provided to Provider
  */
 export type ProvideComponentProps<
   T_Store extends Store<any>,

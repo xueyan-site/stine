@@ -15,22 +15,6 @@ const CONTENTS: ArticleMeta[] = [
     content: () => import('./start')
   },
   {
-    id: 'components',
-    label: '组件',
-    children: [
-      {
-        id: 'article',
-        label: 'Article - 提供主题样式',
-        content: () => import('./article')
-      },
-      {
-        id: 'segment',
-        label: 'Segment - 翻译内容',
-        content: () => import('./segment')
-      }
-    ]
-  },
-  {
     id: 'tools',
     label: '工具',
     children: [

@@ -1,6 +1,6 @@
 {
   "name": "xueyan-react-store",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "author": "xueyan-site <yang@xueyan.site>",
   "license": "MIT",
   "description": "React Store Manage Tool",
@@ -25,7 +25,10 @@
   ],
   "scripts": {
     "start": "xt start",
-    "build": "xt build"
+    "build": "xt build",
+    "start-doc": "xt start doc",
+    "build-doc": "xt build doc",
+    "serve-doc": "xt serve doc"
   },
   "dependencies": {
     "@babel/runtime": "^7.12.5",

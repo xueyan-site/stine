@@ -1,49 +1,6 @@
 # xueyan-react-store
 
-`xueyan-react-store` is a react store manage tool.  
-
-- [xueyan-react-store](#xueyan-react-store)
-  - [Why use it](#why-use-it)
-  - [What are its highlights](#what-are-its-highlights)
-  - [How to use it](#how-to-use-it)
-  - [Interface](#interface)
-  - [Develop](#develop)
-  - [Appendix](#appendix)
-
-## Why use it
-
-## What are its highlights
-
-## How to use it
-
-```ts
-import React from 'react'
-import Store, { createProvider, useData, useStore } from 'xueyan-react-store'
-
-interface Data {
-  a: string
-}
-
-const Provider = createProvider(
-  (props: Data) => new Store<Data>('k', props)
-)
-
-function Received() {
-  const data = useData<Data>('k')
-  const store = useStore<Store<Data>>('k')
-  return <div>{store.type}: {data.a}</div>
-}
-
-function App() {
-  return (
-    <Provider a="this is data">
-      <Received />
-    </Provider>
-  )
-}
-```
-
-## Interface
+Please see <https://xueyan.site/xueyan-react-store>.
 
 ## Develop
 

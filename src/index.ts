@@ -8,7 +8,7 @@ export { default } from './store'
 
 export { getStore, getDataContext, getStoreContext } from './manager'
 
-export { useData, useStore, useStoreCreator } from './hooks'
+export { useData, useStore, useCreator } from './hooks'
 
 export { createProvider } from './providers'
 

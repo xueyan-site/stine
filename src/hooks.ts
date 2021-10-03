@@ -20,7 +20,7 @@ export const useData = <T_Data>(type: string): T_Data => {
  * Create a store directly and use it
  * @param createStore
  */
-export const useStoreCreator: {
+export const useCreator: {
   <T_Store extends Store<any>>(
     createStore: () => T_Store
   ): [T_Store['data'], T_Store]

@@ -228,8 +228,7 @@ export default class Store<T_Data> extends EventEmitter {
     this.__data__ = data
     this.__setData__ = setData
     /**
-     * 使用检测
-     * 若该实例已经在其他地方使用过，则需要警告提示
+     * 使用检测，若该实例已经在其他地方使用过，则需要警告提示
      */
     useEffect(() => {
       setStore(this)
@@ -239,8 +238,7 @@ export default class Store<T_Data> extends EventEmitter {
         this.__isUsed__ = true
       }
       /**
-       * 在组件被卸载时
-       * 执行清除事件
+       * 在组件被卸载时，执行清除事件
        */
       return () => {
         this.emit(STORE_EVENT_TYPE.DESTROY_BEFORE, {

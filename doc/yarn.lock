@@ -688,13 +688,22 @@ xueyan-react-store@^2.0.3:
     "@babel/runtime" "^7.12.5"
     eventemitter3 "^4.0.7"
 
-xueyan-react@^1.3.2:
-  version "1.3.3"
-  resolved "https://registry.yarnpkg.com/xueyan-react/-/xueyan-react-1.3.3.tgz#565f75e2c526c16311ead017e8030e24deec8c69"
-  integrity sha512-SX3n6IqxKfjyweccorMlIXHZrGZi+uwku0rHlXKYJvXPuaWrWFmAQz2pJNsfI+fH/3bGsFqd+eBAor7u3gWLHQ==
+xueyan-react-store@^2.0.5:
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/xueyan-react-store/-/xueyan-react-store-2.0.6.tgz#f871db29970d40d5a411975a8a38c042d99f423e"
+  integrity sha512-BrWIM1eYHeCxEWrA6T+jrx4sBX2lJtQw3ICXKLtS98T7U4Rcl3j0TV2uS1f4sDJCfsbeITmpA+pJu1wa8Eis+A==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+    eventemitter3 "^4.0.7"
+
+xueyan-react@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/xueyan-react/-/xueyan-react-1.4.0.tgz#a6ce152cae6e0b5570f751b71896d055d9a91a32"
+  integrity sha512-2YdzD9BHFCjtEiYSUsJBC/B40OL6oVdsdveWH05368lZgcw6c37QNHsnNWfXm4wfQePMJOHmBp9e4lN1lPIUgQ==
   dependencies:
     "@babel/runtime" "^7.12.5"
     intersection-observer "^0.12.0"
+    xueyan-react-store "^2.0.5"
 
 zwitch@^1.0.0:
   version "1.0.5"

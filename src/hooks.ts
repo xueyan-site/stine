@@ -1,6 +1,6 @@
 import { useContext, useMemo } from 'react'
 import { ensureStoreContext, ensureDataContext } from './manager'
-import type Store from './store'
+import type { Store } from './store'
 
 /**
  * Use store (only if store is supplied on the upper level)

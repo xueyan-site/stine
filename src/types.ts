@@ -1,4 +1,4 @@
-import type Store from './Store'
+import type { Store } from './Store'
 import type { COMPARE_METHOD_MAP } from './constants'
 
 /**
@@ -28,6 +28,11 @@ export interface StoreEventOptions {
 }
 
 /**
+ * Comparison algorithm type
+ */
+export type UpdateTiming = 'nextFrame' | 'now' | number
+
+/**
  * Store's initialization options
  */
 export interface StoreOptions extends StoreEventOptions {
@@ -35,6 +40,8 @@ export interface StoreOptions extends StoreEventOptions {
   debug?: boolean
   /** indicate default compare method: deep, shadow, full */
   compare?: CompareType
+  /** 更新时机 */
+  updateTiming?: UpdateTiming
 }
 
 /**

@@ -1,24 +1,14 @@
-/**
- * @package xueyan-react-store
- * @author xueyan-site <yang@xueyan.site>
- * @description package entry
- */
-
-export { default } from './store'
-
-export { getStore, getDataContext, getStoreContext } from './manager'
-
-export { useData, useStore, useCreator } from './hooks'
-
+export { Store } from './store'
 export { createProvider } from './providers'
-
+export { useData, useStore, useCreator } from './hooks'
+export { getStore, getDataContext, getStoreContext } from './manager'
 export { deepEqual, shallowEqual, fullEqual, random, merge } from './tools'
-
 export { STORE_EVENT_TYPE } from './constants'
 
 export type {
   CompareFunction,
   CompareType,
+  UpdateTiming,
   EventListener,
   StoreOptions,
   StoreEventOptions,

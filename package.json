@@ -1,19 +1,18 @@
 {
   "name": "xueyan-react-store",
-  "version": "2.0.6",
-  "author": "xueyan-site <yang@xueyan.site>",
-  "license": "MIT",
-  "description": "React Store Manage Tool",
+  "version": "2.1.0",
+  "author": "xueyan-site <xueyan@xueyan.site>",
+  "license": "LGPL-3.0",
+  "description": "react state manage tool",
   "main": "dist/node",
   "types": "dist/def",
   "module": "dist/web",
   "keywords": [
-    "react",
     "store",
-    "state",
-    "status",
-    "context",
+    "react",
     "xueyan",
+    "context",
+    "component",
     "typescript"
   ],
   "repository": {
@@ -25,10 +24,7 @@
   ],
   "scripts": {
     "start": "xt start",
-    "build": "xt build",
-    "start-doc": "xt start doc",
-    "build-doc": "xt build doc",
-    "serve-doc": "xt serve doc"
+    "build": "xt build"
   },
   "dependencies": {
     "@babel/runtime": "^7.12.5",

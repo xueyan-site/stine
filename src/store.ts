@@ -15,38 +15,52 @@ import {
   ensureStoreContext
 } from './manager'
 import { random } from './tools'
-import type { Dispatch, SetStateAction, ReactNode } from 'react'
 import type { EventNames, EventArgs } from 'eventemitter3'
-import type { CompareFunction, StoreOptions, CompareType } from './types'
+import type { CompareFunction, StoreOptions, CompareType, UpdateTiming } from './types'
 
 /**
  * Universal status manager
  */
-export default class Store<T_Data> extends EventEmitter {
-  /**
-   * store ID
-   */
-  readonly id: string
-
+export class Store<T_Data> extends EventEmitter {
   /**
    * store type
    */
   readonly type: string
 
   /**
+   * store ID
+   */
+  readonly id: string
+
+  /**
    * Initial data
    */
-  initialData: T_Data
+  defaultData: T_Data
 
   /**
    * Comparison algorithm for deciding whether to update the data
    */
-  defaulComparator: CompareFunction
+  compare: CompareFunction
+
+  /**
+   * 更新时机
+   */
+  updateTiming?: UpdateTiming
 
   /**
    * Whether to enable debug
    */
   debug?: boolean
+
+  /**
+   * Context of current store
+   */
+  protected __storeContext__: Context<this>
+
+  /**
+   * Context of current data
+   */
+  protected __dataContext__: Context<T_Data>
 
   /**
    * Previous data
@@ -61,32 +75,22 @@ export default class Store<T_Data> extends EventEmitter {
   /**
    * handler for set current data
    */
-  protected __setData__: Dispatch<SetStateAction<T_Data>>
+  protected __setData__: React.Dispatch<React.SetStateAction<T_Data>>
 
   /**
    * indicates if it has been used
    */
-  protected __isUsed__?: boolean
+  private __used__?: boolean
 
   /**
    * Update Count
    */
-  protected __updateCount__: number
+  private __updateCount__: number
 
   /**
    * Timer used when updating
    */
-  protected __updateTimer__?: any
-
-  /**
-   * Context of current store
-   */
-  protected __storeContext__: Context<this>
-
-  /**
-   * Context of current data
-   */
-  protected __dataContext__: Context<T_Data>
+  private __updateCloser__?: () => void
 
   /**
    * get previous data
@@ -108,35 +112,21 @@ export default class Store<T_Data> extends EventEmitter {
    * @param type store type
    * @param initialData initial data
    */
-  constructor(type: string, initialData: T_Data, options: StoreOptions = {}) {
+  constructor(type: string, defaultData: T_Data, options: StoreOptions = {}) {
     super()
-    /**
-     * 初始化内部的成员变量
-     */
     this.debug = options.debug
     this.type = type
     this.id = random()
-    this.initialData = initialData
-    this.__data__ = initialData
+    this.defaultData = defaultData
+    this.updateTiming = options.updateTiming
+    this.__data__ = defaultData
     this.__setData__ = () => {}
     this.__updateCount__ = 0
-    /**
-     * 设置上下文
-     */
     this.__dataContext__ = ensureDataContext(type)
     this.__storeContext__ = ensureStoreContext(type)
-    /**
-     * 计算出默认的对比函数
-     */
-    const compare = options.compare
-    if (compare && typeof compare === 'string') {
-      this.defaulComparator = COMPARE_METHOD_MAP[compare]
-    } else {
-      this.defaulComparator = compare || COMPARE_METHOD_MAP.deep
-    }
-    /**
-     * 设置监听器
-     */
+    this.compare = (options.compare && typeof options.compare === 'string')
+      ? COMPARE_METHOD_MAP[options.compare]
+      : options.compare || COMPARE_METHOD_MAP.deep
     initStoreEvent(this, options)
   }
 
@@ -161,55 +151,63 @@ export default class Store<T_Data> extends EventEmitter {
   /**
    * set data
    */
-  set(data: T_Data, compare?: CompareType): boolean {
-    /**
-     * 获取对比方法
-     */
-    let currCompare: CompareFunction
-    if (typeof compare === 'string') {
-      currCompare = COMPARE_METHOD_MAP[compare] || this.defaulComparator
-    } else {
-      currCompare = compare || this.defaulComparator
-    }
+  set(data: T_Data, compare?: CompareType, updateTiming?: UpdateTiming): boolean {
     /**
      * 对比两者是否存在改动，若无，则无需继续
      */
-    if (currCompare(data, this.__data__)) {
+    const currCompare = typeof compare === 'string'
+      ? COMPARE_METHOD_MAP[compare]
+      : compare
+    if ((currCompare || this.compare)(data, this.__data__)) {
       return false
     }
-    const prevData = this.__data__
     /**
      * 发出即将更新的消息
      */
+    const prevData = this.__data__
     this.emit(STORE_EVENT_TYPE.UPDATE_BEFORE, { data, prevData, store: this })
     this.__prevData__ = prevData
     this.__data__ = data
     /**
-     * 延迟刷新页面
+     * 去除定时
      */
-    if (this.__updateTimer__) {
-      clearTimeout(this.__updateTimer__)
+    if (this.__updateCloser__) {
+      this.__updateCloser__()
+      this.__updateCloser__ = undefined
     }
-    this.__updateTimer__ = setTimeout(() => {
+    /**
+     * 更新
+     */
+    const updater = () => {
       this.__setData__(data)
       this.__updateCount__ += 1
-      this.__updateTimer__ = undefined
-    }, 7)
+      this.__updateCloser__ = undefined
+    }
+    const currUpdateTiming = updateTiming || this.updateTiming
+    if (typeof currUpdateTiming === 'number' && currUpdateTiming > 0) {
+      const timer = setTimeout(updater, currUpdateTiming)
+      this.__updateCloser__ = () => clearTimeout(timer)
+    } else if (currUpdateTiming === 'now') {
+      updater()
+    } else {
+      const timer = requestAnimationFrame(updater)
+      this.__updateCloser__ = () => cancelAnimationFrame(timer)
+    }
     return true
   }
 
   /**
    * update part data
    */
-  setPart(partData: Partial<T_Data>, compare?: CompareType): boolean {
-    return this.set({ ...this.__data__, ...partData }, compare)
+  setPart(partData: Partial<T_Data>, compare?: CompareType, updateTiming?: UpdateTiming): boolean {
+    return this.set({ ...this.__data__, ...partData }, compare, updateTiming)
   }
 
   /**
    * reset current data
    */
-  reset(partData?: Partial<T_Data>, compare?: CompareType): boolean {
-    return this.set({ ...this.initialData, ...partData }, compare)
+  reset(partData?: Partial<T_Data>, compare?: CompareType, updateTiming?: UpdateTiming): boolean {
+    return this.set({ ...this.defaultData, ...partData }, compare, updateTiming)
   }
 
   /**
@@ -224,7 +222,7 @@ export default class Store<T_Data> extends EventEmitter {
    * An instance can only be used in one place and cannot be used more than once  
    */
   readonly useStore = (): [T_Data, this] => {
-    const [data, setData] = useState<T_Data>(this.initialData)
+    const [data, setData] = useState<T_Data>(this.defaultData)
     this.__data__ = data
     this.__setData__ = setData
     /**
@@ -232,10 +230,10 @@ export default class Store<T_Data> extends EventEmitter {
      */
     useEffect(() => {
       setStore(this)
-      if (this.__isUsed__) {
+      if (this.__used__) {
         throw new Error(`store ${this.id} cannot be supplied more than once`)
       } else {
-        this.__isUsed__ = true
+        this.__used__ = true
       }
       /**
        * 在组件被卸载时，执行清除事件
@@ -247,7 +245,7 @@ export default class Store<T_Data> extends EventEmitter {
         })
         this.removeAllListeners()
         this.__updateCount__ === 0
-        this.__data__ = this.initialData
+        this.__data__ = this.defaultData
         this.__prevData__ = undefined
         this.__setData__ = () => {}
         deleteStore(this)
@@ -285,11 +283,11 @@ export default class Store<T_Data> extends EventEmitter {
     ...props
   }: {
     [props: string]: any,
-    children?: ReactNode | ((props: { 
+    children?: React.ReactNode | ((props: { 
       [props: string]: any,
       store: Store<T_Data>,
       data: T_Data
-    }) => ReactNode | undefined)
+    }) => React.ReactNode | undefined)
   }) => {
     const [data] = this.useStore()
     return createElement(

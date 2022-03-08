@@ -1,6 +1,6 @@
 import { Context, createContext } from 'react'
 import { STORE_EVENT_TYPE } from './constants'
-import type Store from './store'
+import type { Store } from './store'
 import type { StoreEventOptions } from './types'
 
 /**

@@ -55,42 +55,17 @@ export class Store<T_Data> extends EventEmitter {
   /**
    * Context of current store
    */
-  protected __storeContext__: Context<this>
+  protected storeContext: Context<this>
 
   /**
    * Context of current data
    */
-  protected __dataContext__: Context<T_Data>
+  protected dataContext: Context<T_Data>
 
   /**
    * Previous data
    */
   protected __prevData__?: T_Data
-
-  /**
-   * current data
-   */
-  protected __data__: T_Data
-
-  /**
-   * handler for set current data
-   */
-  protected __setData__: React.Dispatch<React.SetStateAction<T_Data>>
-
-  /**
-   * indicates if it has been used
-   */
-  private __used__?: boolean
-
-  /**
-   * Update Count
-   */
-  private __updateCount__: number
-
-  /**
-   * Timer used when updating
-   */
-  private __updateCloser__?: () => void
 
   /**
    * get previous data
@@ -100,6 +75,11 @@ export class Store<T_Data> extends EventEmitter {
   }
 
   /**
+   * current data
+   */
+  protected __data__: T_Data
+
+  /**
    * get current data
    */
   get data(): T_Data {
@@ -107,12 +87,30 @@ export class Store<T_Data> extends EventEmitter {
   }
 
   /**
-   * create a store
-   *
-   * @param type store type
-   * @param initialData initial data
+   * handler for set current data
    */
-  constructor(type: string, defaultData: T_Data, options: StoreOptions = {}) {
+  protected setData: React.Dispatch<React.SetStateAction<T_Data>>
+
+  /**
+   * indicates if it has been used
+   */
+  private used?: boolean
+
+  /**
+   * Update Count
+   */
+  private updateCount: number
+
+  /**
+   * Timer used when updating
+   */
+  private updateCloser?: () => void
+
+  /**
+   * create a store
+   * @param type store type
+   */
+  constructor(type: string, defaultData: T_Data, options: StoreOptions<T_Data> = {}) {
     super()
     this.debug = options.debug
     this.type = type
@@ -120,10 +118,10 @@ export class Store<T_Data> extends EventEmitter {
     this.defaultData = defaultData
     this.updateTiming = options.updateTiming
     this.__data__ = defaultData
-    this.__setData__ = () => {}
-    this.__updateCount__ = 0
-    this.__dataContext__ = ensureDataContext(type)
-    this.__storeContext__ = ensureStoreContext(type)
+    this.setData = () => {}
+    this.updateCount = 0
+    this.storeContext = ensureStoreContext(type)
+    this.dataContext = ensureDataContext(type, defaultData, options.context)
     this.compare = (options.compare && typeof options.compare === 'string')
       ? COMPARE_METHOD_MAP[options.compare]
       : options.compare || COMPARE_METHOD_MAP.deep
@@ -171,27 +169,31 @@ export class Store<T_Data> extends EventEmitter {
     /**
      * 去除定时
      */
-    if (this.__updateCloser__) {
-      this.__updateCloser__()
-      this.__updateCloser__ = undefined
+    if (this.updateCloser) {
+      this.updateCloser()
+      this.updateCloser = undefined
     }
     /**
      * 更新
      */
-    const updater = () => {
-      this.__setData__(data)
-      this.__updateCount__ += 1
-      this.__updateCloser__ = undefined
+    const update = () => {
+      this.setData(data)
+      this.updateCount += 1
+      this.updateCloser = undefined
     }
     const currUpdateTiming = updateTiming || this.updateTiming
-    if (typeof currUpdateTiming === 'number' && currUpdateTiming > 0) {
-      const timer = setTimeout(updater, currUpdateTiming)
-      this.__updateCloser__ = () => clearTimeout(timer)
+    if (typeof currUpdateTiming === 'number') {
+      if (currUpdateTiming > 0) {
+        const timer = setTimeout(update, currUpdateTiming)
+        this.updateCloser = () => clearTimeout(timer)
+      } else {
+        update()
+      }
     } else if (currUpdateTiming === 'now') {
-      updater()
+      update()
     } else {
-      const timer = requestAnimationFrame(updater)
-      this.__updateCloser__ = () => cancelAnimationFrame(timer)
+      const timer = requestAnimationFrame(update)
+      this.updateCloser = () => cancelAnimationFrame(timer)
     }
     return true
   }
@@ -214,26 +216,27 @@ export class Store<T_Data> extends EventEmitter {
    * Use data (only the provider with Context in the upper layer)
    */
   readonly useData = (): T_Data => {
-    return useContext(this.__dataContext__)
+    return useContext(this.dataContext)
   }
 
   /**
    * Get the data of the current store  
    * An instance can only be used in one place and cannot be used more than once  
    */
-  readonly useStore = (): [T_Data, this] => {
-    const [data, setData] = useState<T_Data>(this.defaultData)
+  readonly useState = (defaultData: T_Data = this.defaultData): [T_Data, this] => {
+    const [data, setData] = useState<T_Data>(defaultData)
     this.__data__ = data
-    this.__setData__ = setData
+    this.setData = setData
     /**
      * 使用检测，若该实例已经在其他地方使用过，则需要警告提示
      */
     useEffect(() => {
       setStore(this)
-      if (this.__used__) {
+      this.defaultData = defaultData
+      if (this.used) {
         throw new Error(`store ${this.id} cannot be supplied more than once`)
       } else {
-        this.__used__ = true
+        this.used = true
       }
       /**
        * 在组件被卸载时，执行清除事件
@@ -244,10 +247,10 @@ export class Store<T_Data> extends EventEmitter {
           store: this
         })
         this.removeAllListeners()
-        this.__updateCount__ === 0
+        this.updateCount === 0
         this.__data__ = this.defaultData
         this.__prevData__ = undefined
-        this.__setData__ = () => {}
+        this.setData = () => {}
         deleteStore(this)
       }
     }, [])
@@ -255,7 +258,7 @@ export class Store<T_Data> extends EventEmitter {
      * 生命周期机制
      */
     useEffect(() => {
-      if (this.__updateCount__ === 0) {
+      if (this.updateCount === 0) {
         this.emit(STORE_EVENT_TYPE.CREATED, {
           data: this.__data__,
           store: this
@@ -270,8 +273,7 @@ export class Store<T_Data> extends EventEmitter {
         data: this.__data__,
         store: this
       })
-
-    }, [this.__updateCount__])
+    }, [this.updateCount])
     return [data, this]
   }
 
@@ -289,15 +291,44 @@ export class Store<T_Data> extends EventEmitter {
       data: T_Data
     }) => React.ReactNode | undefined)
   }) => {
-    const [data] = this.useStore()
+    const [data, store] = this.useState()
     return createElement(
-      this.__storeContext__.Provider,
-      { value: this },
+      this.storeContext.Provider,
+      { value: store },
       createElement(
-        this.__dataContext__.Provider,
+        this.dataContext.Provider,
         { value: data },
         children instanceof Function
-          ? children({ data, store: this, ...props })
+          ? children({  ...props, data, store })
+          : children
+      )
+    )
+  }
+
+  /**
+   * Provisioning data (default data inherit parent context data)
+   */
+  readonly InheritProvider = ({
+    children,
+    ...props
+  }: {
+    [props: string]: any,
+    children?: React.ReactNode | ((props: {
+      [props: string]: any,
+      store: Store<T_Data>,
+      data: T_Data
+    }) => React.ReactNode | undefined)
+  }) => {
+    const defaultData = useContext(this.dataContext)
+    const [data, store] = this.useState(defaultData)
+    return createElement(
+      this.storeContext.Provider,
+      { value: store },
+      createElement(
+        this.dataContext.Provider,
+        { value: data },
+        children instanceof Function
+          ? children({  ...props, data, store })
           : children
       )
     )

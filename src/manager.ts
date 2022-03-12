@@ -1,13 +1,10 @@
-import { Context, createContext } from 'react'
+import React, { Context, createContext } from 'react'
 import { STORE_EVENT_TYPE } from './constants'
 import type { Store } from './store'
 import type { StoreEventOptions } from './types'
 
 /**
  * Set the listener at initialization time
- *
- * @param store
- * @param options
  */
 export const initStoreEvent = <T_Store extends Store<any>>(
   store: T_Store,
@@ -37,7 +34,6 @@ const storeMap = new Map<string, Store<any>>()
 
 /**
  * Get the generated store instance
- * @param storeId
  */
 export const getStore = <T_Store extends Store<any>>(
   storeId: string
@@ -47,7 +43,6 @@ export const getStore = <T_Store extends Store<any>>(
 
 /**
  * Set the generated store instance
- * @param storeId
  */
 export const setStore = <T_Store extends Store<any>>(store: T_Store): void => {
   storeMap.set(store.id, store)
@@ -55,7 +50,6 @@ export const setStore = <T_Store extends Store<any>>(store: T_Store): void => {
 
 /**
  * Delete the generated store instance
- * @param storeId
  */
 export const deleteStore = <T_Store extends Store<any>>(
   store: T_Store
@@ -70,7 +64,6 @@ const storeContextMap = new Map<string, Context<any>>()
 
 /**
  * Get store instance context
- * @param storeType
  */
 export const getStoreContext = <T_Store extends Store<any>>(
   storeType: string
@@ -80,14 +73,13 @@ export const getStoreContext = <T_Store extends Store<any>>(
 
 /**
  * Get store instance context (create if none)
- * @param storeType
  */
 export const ensureStoreContext = <T_Store extends Store<any>>(
   storeType: string
 ): Context<T_Store> => {
   let context = storeContextMap.get(storeType)
   if (!context) {
-    context = createContext({})
+    context = createContext<any>({})
     context.displayName = 'store_' + storeType
     storeContextMap.set(storeType, context)
   }
@@ -101,7 +93,6 @@ const dataContextMap = new Map<string, Context<any>>()
 
 /**
  * Get store data context
- * @param storeType
  */
 export const getDataContext = <T_Data>(
   storeType: string
@@ -111,14 +102,15 @@ export const getDataContext = <T_Data>(
 
 /**
  * Get store data context (create if none)
- * @param storeType
  */
 export const ensureDataContext = <T_Data>(
-  storeType: string
+  storeType: string,
+  defaultData?: T_Data,
+  defaultContext?: React.Context<T_Data>
 ): Context<T_Data> => {
   let context = dataContextMap.get(storeType)
   if (!context) {
-    context = createContext({})
+    context = defaultContext || createContext<any>(defaultData)
     context.displayName = 'data_' + storeType
     dataContextMap.set(storeType, context)
   }

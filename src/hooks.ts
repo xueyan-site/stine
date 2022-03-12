@@ -18,7 +18,6 @@ export const useData = <T_Data>(type: string): T_Data => {
 
 /**
  * Create a store directly and use it
- * @param createStore
  */
 export const useCreator: {
   <T_Store extends Store<any>>(
@@ -30,5 +29,5 @@ export const useCreator: {
   ): [T_Store['data'], T_Store]
 } = ((createStore: any, props: any) => {
   const store = useMemo<Store<any>>(() => createStore(props), [])
-  return store.useStore()
+  return store.useState()
 }) as any

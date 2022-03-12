@@ -35,9 +35,11 @@ export type UpdateTiming = 'nextFrame' | 'now' | number
 /**
  * Store's initialization options
  */
-export interface StoreOptions extends StoreEventOptions {
+export interface StoreOptions<T_Data> extends StoreEventOptions {
   /** open debug mode, store will console data when emit event */
   debug?: boolean
+  /** Context of current data */
+  context?: React.Context<T_Data>
   /** indicate default compare method: deep, shadow, full */
   compare?: CompareType
   /** 更新时机 */

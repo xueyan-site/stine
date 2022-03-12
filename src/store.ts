@@ -110,7 +110,7 @@ export class Store<T_Data> extends EventEmitter {
    * create a store
    * @param type store type
    */
-  constructor(type: string, defaultData: T_Data, options: StoreOptions<T_Data> = {}) {
+  constructor(type: string, defaultData: T_Data, options: StoreOptions = {}) {
     super()
     this.debug = options.debug
     this.type = type
@@ -121,7 +121,7 @@ export class Store<T_Data> extends EventEmitter {
     this.setData = () => {}
     this.updateCount = 0
     this.storeContext = ensureStoreContext(type)
-    this.dataContext = ensureDataContext(type, defaultData, options.context)
+    this.dataContext = ensureDataContext(type, defaultData)
     this.compare = (options.compare && typeof options.compare === 'string')
       ? COMPARE_METHOD_MAP[options.compare]
       : options.compare || COMPARE_METHOD_MAP.deep

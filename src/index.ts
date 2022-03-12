@@ -1,7 +1,7 @@
 export { Store } from './store'
 export { useData, useStore, useCreator } from './hooks'
 export { createProvider, createInhertProvider } from './providers'
-export { getStore, getDataContext, getStoreContext } from './manager'
+export { ensureDataContext, getDataContext, getStore, getStoreContext } from './manager'
 export { deepEqual, shallowEqual, fullEqual, random, merge } from './tools'
 export { STORE_EVENT_TYPE } from './constants'
 

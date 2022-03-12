@@ -1,4 +1,4 @@
-import React, { Context, createContext } from 'react'
+import { Context, createContext } from 'react'
 import { STORE_EVENT_TYPE } from './constants'
 import type { Store } from './store'
 import type { StoreEventOptions } from './types'
@@ -80,7 +80,7 @@ export const ensureStoreContext = <T_Store extends Store<any>>(
   let context = storeContextMap.get(storeType)
   if (!context) {
     context = createContext<any>({})
-    context.displayName = 'store_' + storeType
+    context.displayName = 'store ' + storeType
     storeContextMap.set(storeType, context)
   }
   return context
@@ -106,12 +106,11 @@ export const getDataContext = <T_Data>(
 export const ensureDataContext = <T_Data>(
   storeType: string,
   defaultData?: T_Data,
-  defaultContext?: React.Context<T_Data>
 ): Context<T_Data> => {
   let context = dataContextMap.get(storeType)
   if (!context) {
-    context = defaultContext || createContext<any>(defaultData)
-    context.displayName = 'data_' + storeType
+    context = createContext<any>(defaultData)
+    context.displayName = 'data ' + storeType
     dataContextMap.set(storeType, context)
   }
   return context

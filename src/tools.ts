@@ -1,5 +1,9 @@
-import { RANDOM_CHARS } from './constants'
 import type { CompareFunction } from './types'
+
+/**
+ * always return not equal
+ */
+export const notCompare: CompareFunction = () => false
 
 /**
  * All-equal comparison of two parameters
@@ -61,6 +65,15 @@ export const deepEqual: CompareFunction = (a: any, b: any): boolean => {
   }
   return true
 }
+
+export const COMPARE_METHOD_MAP = {
+  is: fullEqual,
+  deep: deepEqual,
+  shallow: shallowEqual,
+  not: notCompare,
+}
+
+export const RANDOM_CHARS = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz'
 
 /**
  * Generate random string

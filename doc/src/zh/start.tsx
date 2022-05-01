@@ -46,7 +46,7 @@ const MARK3 = `
 \`\`\`typescript
 import Store, { createProvider, useData, useStore, merge } from 'xueyan-react-store'
 
-const STORE_KEY = 'random-key'
+const STORE_KEY = 'randomkey'
 
 export interface Foo {
   a: string

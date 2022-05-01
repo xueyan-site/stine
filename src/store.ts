@@ -6,7 +6,7 @@ import {
   Context
 } from 'react'
 import EventEmitter from 'eventemitter3'
-import { COMPARE_METHOD_MAP, STORE_EVENT_TYPE } from './constants'
+import { random, COMPARE_METHOD_MAP } from './tools'
 import {
   setStore,
   deleteStore,
@@ -14,14 +14,32 @@ import {
   ensureDataContext,
   ensureStoreContext
 } from './manager'
-import { random } from './tools'
 import type { EventNames, EventArgs } from 'eventemitter3'
-import type { CompareFunction, StoreOptions, CompareType, UpdateTiming } from './types'
+import type { CompareFunction, StoreEventOptions, CompareType, UpdateTiming } from './types'
 
 /**
- * Universal status manager
+ * Store's initialization options
  */
-export class Store<T_Data> extends EventEmitter {
+export interface StoreOptions extends StoreEventOptions {
+  /** open debug mode, store will console data when emit event */
+  debug?: boolean
+  /** indicate default compare method: deep, shadow, full */
+  compare?: CompareType
+  /** 更新时机 */
+  updateTiming?: UpdateTiming
+}
+
+export interface StoreSetOptions {
+  /** indicate default compare method: deep, shadow, full */
+  compare?: CompareType,
+  /** 更新时机 */
+  updateTiming?: UpdateTiming
+}
+
+/**
+ * universal status manager
+ */
+export class Store<T> extends EventEmitter {
   /**
    * store type
    */
@@ -35,7 +53,7 @@ export class Store<T_Data> extends EventEmitter {
   /**
    * Initial data
    */
-  defaultData: T_Data
+  defaultData: T
 
   /**
    * Comparison algorithm for deciding whether to update the data
@@ -60,36 +78,36 @@ export class Store<T_Data> extends EventEmitter {
   /**
    * Context of current data
    */
-  protected dataContext: Context<T_Data>
+  protected dataContext: Context<T>
 
   /**
    * Previous data
    */
-  protected __prevData__?: T_Data
+  protected _prevData?: T
 
   /**
    * get previous data
    */
-  get prevData(): T_Data | undefined {
-    return this.__prevData__
+  get prevData(): T | undefined {
+    return this._prevData
   }
 
   /**
    * current data
    */
-  protected __data__: T_Data
+  protected _data: T
 
   /**
    * get current data
    */
-  get data(): T_Data {
-    return this.__data__
+  get data(): T {
+    return this._data
   }
 
   /**
    * handler for set current data
    */
-  protected setData: React.Dispatch<React.SetStateAction<T_Data>>
+  protected setData: React.Dispatch<React.SetStateAction<T>>
 
   /**
    * indicates if it has been used
@@ -110,21 +128,21 @@ export class Store<T_Data> extends EventEmitter {
    * create a store
    * @param type store type
    */
-  constructor(type: string, defaultData: T_Data, options: StoreOptions = {}) {
+  constructor(type: string, defaultData: T, options: StoreOptions = {}) {
     super()
     this.debug = options.debug
     this.type = type
     this.id = random()
     this.defaultData = defaultData
     this.updateTiming = options.updateTiming
-    this.__data__ = defaultData
+    this._data = defaultData
     this.setData = () => {}
     this.updateCount = 0
     this.storeContext = ensureStoreContext(type)
     this.dataContext = ensureDataContext(type, defaultData)
     this.compare = (options.compare && typeof options.compare === 'string')
       ? COMPARE_METHOD_MAP[options.compare]
-      : options.compare || COMPARE_METHOD_MAP.deep
+      : (options.compare || COMPARE_METHOD_MAP.deep)
     initStoreEvent(this, options)
   }
 
@@ -149,23 +167,23 @@ export class Store<T_Data> extends EventEmitter {
   /**
    * set data
    */
-  set(data: T_Data, compare?: CompareType, updateTiming?: UpdateTiming): boolean {
+  set(data: T, options: StoreSetOptions = {}): boolean {
     /**
      * 对比两者是否存在改动，若无，则无需继续
      */
-    const currCompare = typeof compare === 'string'
-      ? COMPARE_METHOD_MAP[compare]
-      : compare
-    if ((currCompare || this.compare)(data, this.__data__)) {
+    const compare = typeof options.compare === 'string'
+      ? COMPARE_METHOD_MAP[options.compare]
+      : options.compare
+    if ((compare || this.compare)(data, this._data)) {
       return false
     }
     /**
      * 发出即将更新的消息
      */
-    const prevData = this.__data__
-    this.emit(STORE_EVENT_TYPE.UPDATE_BEFORE, { data, prevData, store: this })
-    this.__prevData__ = prevData
-    this.__data__ = data
+    const prevData = this._data
+    this.emit('beforeUpdate', { data, prevData, store: this })
+    this._prevData = prevData
+    this._data = data
     /**
      * 去除定时
      */
@@ -181,15 +199,15 @@ export class Store<T_Data> extends EventEmitter {
       this.updateCount += 1
       this.updateCloser = undefined
     }
-    const currUpdateTiming = updateTiming || this.updateTiming
-    if (typeof currUpdateTiming === 'number') {
-      if (currUpdateTiming > 0) {
-        const timer = setTimeout(update, currUpdateTiming)
+    const _updateTiming = options.updateTiming || this.updateTiming
+    if (typeof _updateTiming === 'number') {
+      if (_updateTiming > 0) {
+        const timer = setTimeout(update, _updateTiming)
         this.updateCloser = () => clearTimeout(timer)
       } else {
         update()
       }
-    } else if (currUpdateTiming === 'now') {
+    } else if (_updateTiming === 'now') {
       update()
     } else {
       const timer = requestAnimationFrame(update)
@@ -199,23 +217,49 @@ export class Store<T_Data> extends EventEmitter {
   }
 
   /**
-   * update part data
+   * reset current data
    */
-  setPart(partData: Partial<T_Data>, compare?: CompareType, updateTiming?: UpdateTiming): boolean {
-    return this.set({ ...this.__data__, ...partData }, compare, updateTiming)
+  reset(partData?: Partial<T>, options?: StoreSetOptions): boolean {
+    return this.set({ ...this.defaultData, ...partData }, options)
   }
 
   /**
-   * reset current data
+   * update part data
    */
-  reset(partData?: Partial<T_Data>, compare?: CompareType, updateTiming?: UpdateTiming): boolean {
-    return this.set({ ...this.defaultData, ...partData }, compare, updateTiming)
+  setPart(part: Partial<T>, options?: StoreSetOptions): boolean {
+    return this.set({ ...this._data, ...part }, options)
+  }
+
+  /**
+   * update item
+   */
+  setItem<K extends keyof T>(
+    key: K, 
+    item: T[K], 
+    options?: StoreSetOptions
+  ): boolean {
+    const partData: Partial<T> = {}
+    partData[key] = item
+    return this.setPart(partData, options)
+  }
+
+  /**
+   * update item part
+   */
+  setItemPart<K extends keyof T>(
+    key: K, 
+    itemPart: Partial<T[K]>, 
+    options?: StoreSetOptions
+  ): boolean {
+    const partData: Partial<T> = {}
+    partData[key] = { ...this.data[key], ...itemPart }
+    return this.setPart(partData, options)
   }
 
   /**
    * Use data (only the provider with Context in the upper layer)
    */
-  readonly useData = (): T_Data => {
+  readonly useData = (): T => {
     return useContext(this.dataContext)
   }
 
@@ -223,9 +267,9 @@ export class Store<T_Data> extends EventEmitter {
    * Get the data of the current store  
    * An instance can only be used in one place and cannot be used more than once  
    */
-  readonly useState = (defaultData: T_Data = this.defaultData): [T_Data, this] => {
-    const [data, setData] = useState<T_Data>(defaultData)
-    this.__data__ = data
+  readonly useState = (defaultData: T = this.defaultData): [T, this] => {
+    const [data, setData] = useState<T>(defaultData)
+    this._data = data
     this.setData = setData
     /**
      * 使用检测，若该实例已经在其他地方使用过，则需要警告提示
@@ -242,14 +286,14 @@ export class Store<T_Data> extends EventEmitter {
        * 在组件被卸载时，执行清除事件
        */
       return () => {
-        this.emit(STORE_EVENT_TYPE.DESTROY_BEFORE, {
-          data: this.__data__,
+        this.emit('beforeDestroy', {
+          data: this._data,
           store: this
         })
         this.removeAllListeners()
         this.updateCount === 0
-        this.__data__ = this.defaultData
-        this.__prevData__ = undefined
+        this._data = this.defaultData
+        this._prevData = undefined
         this.setData = () => {}
         deleteStore(this)
       }
@@ -259,18 +303,18 @@ export class Store<T_Data> extends EventEmitter {
      */
     useEffect(() => {
       if (this.updateCount === 0) {
-        this.emit(STORE_EVENT_TYPE.CREATED, {
-          data: this.__data__,
+        this.emit('created', {
+          data: this._data,
           store: this
         })
       } else {
-        this.emit(STORE_EVENT_TYPE.UPDATED, {
-          data: this.__data__,
+        this.emit('updated', {
+          data: this._data,
           store: this
         })
       }
-      this.emit(STORE_EVENT_TYPE.RENDERED, {
-        data: this.__data__,
+      this.emit('rendered', {
+        data: this._data,
         store: this
       })
     }, [this.updateCount])
@@ -287,8 +331,8 @@ export class Store<T_Data> extends EventEmitter {
     [props: string]: any,
     children?: React.ReactNode | ((props: { 
       [props: string]: any,
-      store: Store<T_Data>,
-      data: T_Data
+      store: Store<T>,
+      data: T
     }) => React.ReactNode | undefined)
   }) => {
     const [data, store] = this.useState()
@@ -315,8 +359,8 @@ export class Store<T_Data> extends EventEmitter {
     [props: string]: any,
     children?: React.ReactNode | ((props: {
       [props: string]: any,
-      store: Store<T_Data>,
-      data: T_Data
+      store: Store<T>,
+      data: T
     }) => React.ReactNode | undefined)
   }) => {
     const defaultData = useContext(this.dataContext)

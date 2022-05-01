@@ -6,13 +6,13 @@ import type { ProvideComponentProps } from './types'
  * Create a Provider
  * @param createStore
  */
-export function createProvider<T_Store extends Store<any>, T_Props = {}>(
-  createStore: (props: T_Props) => T_Store,
-  Component?: React.ComponentType<ProvideComponentProps<T_Store, T_Props>>
+export function createProvider<S extends Store<any>, P = {}>(
+  createStore: (props: P) => S,
+  Component?: React.ComponentType<ProvideComponentProps<S, P>>
 ) {
   if (Component) {
-    return forwardRef<T_Store, React.PropsWithChildren<T_Props>>((props, ref) => {
-      const storeRef = useRef<T_Store>()
+    return forwardRef<S, React.PropsWithChildren<P>>((props, ref) => {
+      const storeRef = useRef<S>()
       if (!storeRef.current) {
         storeRef.current = createStore(props)
       }
@@ -27,8 +27,8 @@ export function createProvider<T_Store extends Store<any>, T_Props = {}>(
       )
     })
   } else {
-    return forwardRef<T_Store, React.PropsWithChildren<T_Props>>((props, ref) => {
-      const storeRef = useRef<T_Store>()
+    return forwardRef<S, React.PropsWithChildren<P>>((props, ref) => {
+      const storeRef = useRef<S>()
       if (!storeRef.current) {
         storeRef.current = createStore(props)
       }
@@ -42,13 +42,13 @@ export function createProvider<T_Store extends Store<any>, T_Props = {}>(
  * Create a Provider
  * @param createStore
  */
- export function createInhertProvider<T_Store extends Store<any>, T_Props = {}>(
-  createStore: (props: T_Props) => T_Store,
-  Component?: React.ComponentType<ProvideComponentProps<T_Store, T_Props>>
+ export function createInhertProvider<S extends Store<any>, P = {}>(
+  createStore: (props: P) => S,
+  Component?: React.ComponentType<ProvideComponentProps<S, P>>
 ) {
   if (Component) {
-    return forwardRef<T_Store, React.PropsWithChildren<T_Props>>((props, ref) => {
-      const storeRef = useRef<T_Store>()
+    return forwardRef<S, React.PropsWithChildren<P>>((props, ref) => {
+      const storeRef = useRef<S>()
       if (!storeRef.current) {
         storeRef.current = createStore(props)
       }
@@ -63,8 +63,8 @@ export function createProvider<T_Store extends Store<any>, T_Props = {}>(
       )
     })
   } else {
-    return forwardRef<T_Store, React.PropsWithChildren<T_Props>>((props, ref) => {
-      const storeRef = useRef<T_Store>()
+    return forwardRef<S, React.PropsWithChildren<P>>((props, ref) => {
+      const storeRef = useRef<S>()
       if (!storeRef.current) {
         storeRef.current = createStore(props)
       }

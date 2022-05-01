@@ -10,13 +10,13 @@ export function createProvider<S extends Store<any>, P = {}>(
   createStore: (props: P) => S,
   Component?: React.ComponentType<ProvideComponentProps<S, P>>
 ) {
-  if (Component) {
-    return forwardRef<S, React.PropsWithChildren<P>>((props, ref) => {
-      const storeRef = useRef<S>()
-      if (!storeRef.current) {
-        storeRef.current = createStore(props)
-      }
-      useImperativeHandle(ref, () => storeRef.current as any)
+  return forwardRef<S, React.PropsWithChildren<P>>((props, ref) => {
+    const storeRef = useRef<S>()
+    if (!storeRef.current) {
+      storeRef.current = createStore(props)
+    }
+    useImperativeHandle(ref, () => storeRef.current as any)
+    if (Component) {
       return createElement(
         storeRef.current.Provider,
         undefined,
@@ -25,17 +25,10 @@ export function createProvider<S extends Store<any>, P = {}>(
           store: storeRef.current
         })
       )
-    })
-  } else {
-    return forwardRef<S, React.PropsWithChildren<P>>((props, ref) => {
-      const storeRef = useRef<S>()
-      if (!storeRef.current) {
-        storeRef.current = createStore(props)
-      }
-      useImperativeHandle(ref, () => storeRef.current as any)
+    } else {
       return createElement(storeRef.current.Provider, props)
-    })
-  }
+    }
+  })
 }
 
 /**
@@ -46,13 +39,13 @@ export function createProvider<S extends Store<any>, P = {}>(
   createStore: (props: P) => S,
   Component?: React.ComponentType<ProvideComponentProps<S, P>>
 ) {
-  if (Component) {
-    return forwardRef<S, React.PropsWithChildren<P>>((props, ref) => {
-      const storeRef = useRef<S>()
-      if (!storeRef.current) {
-        storeRef.current = createStore(props)
-      }
-      useImperativeHandle(ref, () => storeRef.current as any)
+  return forwardRef<S, React.PropsWithChildren<P>>((props, ref) => {
+    const storeRef = useRef<S>()
+    if (!storeRef.current) {
+      storeRef.current = createStore(props)
+    }
+    useImperativeHandle(ref, () => storeRef.current as any)
+    if (Component) {
       return createElement(
         storeRef.current.InheritProvider,
         undefined,
@@ -61,15 +54,8 @@ export function createProvider<S extends Store<any>, P = {}>(
           store: storeRef.current
         })
       )
-    })
-  } else {
-    return forwardRef<S, React.PropsWithChildren<P>>((props, ref) => {
-      const storeRef = useRef<S>()
-      if (!storeRef.current) {
-        storeRef.current = createStore(props)
-      }
-      useImperativeHandle(ref, () => storeRef.current as any)
+    } else {
       return createElement(storeRef.current.InheritProvider, props)
-    })
-  }
+    }
+  })
 }

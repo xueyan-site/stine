@@ -333,7 +333,7 @@ export class Store<T> extends EventEmitter {
       [props: string]: any,
       store: Store<T>,
       data: T
-    }) => React.ReactNode | undefined)
+    }) => React.ReactNode)
   }) => {
     const [data, store] = this.useState()
     return createElement(
@@ -343,7 +343,7 @@ export class Store<T> extends EventEmitter {
         this.dataContext.Provider,
         { value: data },
         children instanceof Function
-          ? children({  ...props, data, store })
+          ? children({ ...props, data, store })
           : children
       )
     )
@@ -361,7 +361,7 @@ export class Store<T> extends EventEmitter {
       [props: string]: any,
       store: Store<T>,
       data: T
-    }) => React.ReactNode | undefined)
+    }) => React.ReactNode)
   }) => {
     const defaultData = useContext(this.dataContext)
     const [data, store] = this.useState(defaultData)
@@ -372,7 +372,7 @@ export class Store<T> extends EventEmitter {
         this.dataContext.Provider,
         { value: data },
         children instanceof Function
-          ? children({  ...props, data, store })
+          ? children({ ...props, data, store })
           : children
       )
     )

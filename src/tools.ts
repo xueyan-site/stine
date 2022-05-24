@@ -73,23 +73,27 @@ export const COMPARE_METHOD_MAP = {
   not: notCompare,
 }
 
-export const RANDOM_CHARS = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz'
+const RANDOM_INI_CHARS = 'acdefghijkmnprstuvwxyz'
+
+const RANDOM_SUF_CHARS = '0123456789' + RANDOM_INI_CHARS
 
 /**
  * Generate random string
- * 
- * @param length Length of the random string
- * @returns 
  */
-export function random(length: number = 16) {
-  const MAX = RANDOM_CHARS.length
-  let current = ''
+export function random(length: number = 12) {
+  let str: string = ''
   for (let i = 0; i < length; i++) {
-    current += RANDOM_CHARS.charAt(
-      Math.floor(Math.random() * MAX)
-    )
+    if (i === 0) {
+      str += RANDOM_INI_CHARS.charAt(
+        Math.floor(Math.random() * RANDOM_INI_CHARS.length)
+      )
+    } else {
+      str += RANDOM_SUF_CHARS.charAt(
+        Math.floor(Math.random() * RANDOM_SUF_CHARS.length)
+      )
+    }
   }
-  return current
+  return str
 }
 
 /**

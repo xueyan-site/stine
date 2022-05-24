@@ -10,6 +10,7 @@ export type {
   CompareType,
   UpdateTiming,
   EventListener,
+  StoreEventType,
   StoreEventOptions,
   ProvideComponentProps
 } from './types'

@@ -35,7 +35,7 @@ export function createProvider<S extends Store<any>, P = {}>(
  * Create a Provider
  * @param createStore
  */
- export function createInhertProvider<S extends Store<any>, P = {}>(
+export function createInhertProvider<S extends Store<any>, P = {}>(
   createStore: (props: P) => S,
   Component?: React.ComponentType<ProvideComponentProps<S, P>>
 ) {

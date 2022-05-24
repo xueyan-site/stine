@@ -1,32 +1,68 @@
 import React from 'react'
-import Doc from 'utl/doc'
+import { PageDoc } from 'com/page-doc'
+import pkg from '../../../package.json'
 import type { PageProps } from 'xueyan-react'
-import type { ArticleMeta } from 'xueyan-react-doc'
+import type { Collection } from 'xueyan-react-doc'
 
-const CONTENTS: ArticleMeta[] = [
+const COLLECTIONS: Collection<string,string>[] = [
   {
-    id: 'intro',
-    label: '介绍',
-    content: () => import('./intro')
-  },
-  {
-    id: 'start',
-    label: '快速开始',
-    content: () => import('./start')
-  },
-  {
-    id: 'tools',
-    label: '工具',
-    children: [
+    value: '9999',
+    label: '指南',
+    contents: [
       {
-        id: 'config',
-        label: 'config - 配置',
-        content: () => import('./config')
+        value: '0001',
+        label: '介绍',
+        content: () => import('./0001')
+      },
+      {
+        value: '0007',
+        label: '用法',
+        content: () => import('./0007')
+      }
+    ]
+  },
+  {
+    value: '9998',
+    label: '接口文档',
+    contents: [
+      {
+        value: '0002',
+        label: 'Store 类',
+        content: () => import('./0002')
+      },
+      {
+        value: '0003',
+        label: 'Hooks',
+        content: () => import('./0003')
+      },
+      {
+        value: '0004',
+        label: '供应器',
+        content: () => import('./0004')
+      },
+      {
+        value: '0005',
+        label: '上下文',
+        content: () => import('./0005')
+      },
+      {
+        value: '0006',
+        label: '工具箱',
+        content: () => import('./0006')
       }
     ]
   }
 ]
 
 export default function Index(props: PageProps) {
-  return <Doc {...props} contents={CONTENTS} />
+  return (
+    <PageDoc 
+      {...props}
+      language="zh"
+      version={pkg.version}
+      collections={COLLECTIONS}
+      name={pkg.name}
+      description={pkg.description}
+    />
+  )
 }

@@ -197,9 +197,9 @@ export class Store<T> extends EventEmitter {
      * 更新
      */
     const update = () => {
-      this.setData(data)
       this.updateCount += 1
       this.updateCloser = undefined
+      this.setData(data)
     }
     const _updateTiming = options.updateTiming || this.updateTiming
     if (typeof _updateTiming === 'number') {

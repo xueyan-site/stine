@@ -1,19 +1,19 @@
-import { useRef, useImperativeHandle, forwardRef, createElement } from 'react'
+import React, { useRef, useImperativeHandle, forwardRef, createElement } from 'react'
 import { Store } from './store'
-import type { ProvideComponentProps } from './types'
+import type { ProviderProps } from './types'
 
 /**
  * Create a Provider
- * @param createStore
  */
 export function createProvider<S extends Store<any>, P = {}>(
-  createStore: (props: P) => S,
-  Component?: React.ComponentType<ProvideComponentProps<S, P>>
+  createStore: (props: Omit<P, 'children'>) => S,
+  Component?: React.ComponentType<ProviderProps<S, P>>
 ) {
-  return forwardRef<S, React.PropsWithChildren<P>>((props, ref) => {
+  return forwardRef<S, P>((props, ref) => {
     const storeRef = useRef<S>()
     if (!storeRef.current) {
-      storeRef.current = createStore(props)
+      const { children, ...other } = props
+      storeRef.current = createStore(other)
     }
     useImperativeHandle(ref, () => storeRef.current as any)
     if (Component) {
@@ -32,17 +32,17 @@ export function createProvider<S extends Store<any>, P = {}>(
 }
 
 /**
- * Create a Provider
- * @param createStore
+ * Create a Inhert Provider
  */
 export function createInhertProvider<S extends Store<any>, P = {}>(
-  createStore: (props: P) => S,
-  Component?: React.ComponentType<ProvideComponentProps<S, P>>
+  createStore: (props: Omit<P, 'children'>) => S,
+  Component?: React.ComponentType<ProviderProps<S, P>>
 ) {
   return forwardRef<S, React.PropsWithChildren<P>>((props, ref) => {
     const storeRef = useRef<S>()
     if (!storeRef.current) {
-      storeRef.current = createStore(props)
+      const { children, ...other } = props
+      storeRef.current = createStore(other)
     }
     useImperativeHandle(ref, () => storeRef.current as any)
     if (Component) {

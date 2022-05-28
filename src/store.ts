@@ -140,9 +140,11 @@ export class Store<T> extends EventEmitter {
     this.updateCount = 0
     this.storeContext = ensureStoreContext(type)
     this.dataContext = ensureDataContext(type, defaultData)
-    this.compare = (options.compare && typeof options.compare === 'string')
-      ? COMPARE_METHOD_MAP[options.compare]
-      : (options.compare || COMPARE_METHOD_MAP.deep)
+    this.compare = (
+      typeof options.compare === 'string'
+        ? COMPARE_METHOD_MAP[options.compare]
+        : options.compare
+    ) || COMPARE_METHOD_MAP.deep
     initStoreEvent(this, options)
   }
 

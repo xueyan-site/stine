@@ -12,7 +12,7 @@ export const useStore = <S extends Store<any>>(type: string): S => {
 /**
  * Use data (only when data is available on the upper level)
  */
-export const useData = <T>(type: string): T => {
+export const useData = <T = any>(type: string): T => {
   return useContext(ensureDataContext(type))
 }
 

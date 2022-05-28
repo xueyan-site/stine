@@ -2,7 +2,7 @@ import React from 'react'
 import { Article, Segment } from 'xueyan-react-markdown'
 
 const MARK1 = `
-> 用法不限于以下几种，此处仅用于示范。
+> 用法不限于以下，此处仅作示范。
 
 ## 直接使用
 

@@ -24,6 +24,6 @@ export interface StoreEventOptions {
 
 export type UpdateTiming = 'nextFrame' | 'now' | number
 
-export type ProviderProps<S extends Store<any>, P = {}> = P & {
+export type ProviderComponentProps<S extends Store<any>, P = {}> = P & {
   store: S
 }

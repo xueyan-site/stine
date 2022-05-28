@@ -6,11 +6,11 @@ export { deepEqual, shallowEqual, fullEqual, random, merge } from './tools'
 
 export type { StoreOptions } from './store'
 export type {
-  ProviderProps,
   CompareFunction,
   CompareType,
   UpdateTiming,
   EventListener,
   StoreEventType,
   StoreEventOptions,
+  ProviderComponentProps,
 } from './types'

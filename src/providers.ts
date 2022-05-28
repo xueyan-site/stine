@@ -1,15 +1,15 @@
-import React, { useRef, useImperativeHandle, forwardRef, createElement } from 'react'
+import { useRef, useImperativeHandle, forwardRef, createElement } from 'react'
 import { Store } from './store'
-import type { ProviderProps } from './types'
+import type { ProviderComponentProps } from './types'
 
 /**
  * Create a Provider
  */
 export function createProvider<S extends Store<any>, P = {}>(
   createStore: (props: Omit<P, 'children'>) => S,
-  Component?: React.ComponentType<ProviderProps<S, P>>
+  Component?: React.ComponentType<ProviderComponentProps<S, P>>
 ) {
-  return forwardRef<S, P>((props, ref) => {
+  return forwardRef<S, React.PropsWithChildren<P>>((props, ref) => {
     const storeRef = useRef<S>()
     if (!storeRef.current) {
       const { children, ...other } = props
@@ -36,7 +36,7 @@ export function createProvider<S extends Store<any>, P = {}>(
  */
 export function createInhertProvider<S extends Store<any>, P = {}>(
   createStore: (props: Omit<P, 'children'>) => S,
-  Component?: React.ComponentType<ProviderProps<S, P>>
+  Component?: React.ComponentType<ProviderComponentProps<S, P>>
 ) {
   return forwardRef<S, React.PropsWithChildren<P>>((props, ref) => {
     const storeRef = useRef<S>()

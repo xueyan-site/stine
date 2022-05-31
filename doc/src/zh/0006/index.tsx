@@ -4,9 +4,7 @@ import { Article, Segment } from 'xueyan-react-markdown'
 const MARK1 = `
 ## deepEqual
 
-\`\`\`typescript
-type deepEqual = (a: any, b: any) => boolean
-\`\`\`
+\`(a: any, b: any) => boolean\`
 
 判断两份数据是否深度值相等
 
@@ -14,9 +12,7 @@ type deepEqual = (a: any, b: any) => boolean
 
 ## shallowEqual
 
-\`\`\`typescript
-type shallowEqual = (a: any, b: any) => boolean
-\`\`\`
+\`(a: any, b: any) => boolean\`
 
 判断两份数据是否浅层值相等
 
@@ -24,9 +20,7 @@ type shallowEqual = (a: any, b: any) => boolean
 
 ## fullEqual
 
-\`\`\`typescript
-type fullEqual = (a: any, b: any) => boolean
-\`\`\`
+\`(a: any, b: any) => boolean\`
 
 判断是否全等
 
@@ -34,9 +28,7 @@ type fullEqual = (a: any, b: any) => boolean
 
 ## random
 
-\`\`\`typescript
-type random = (length: number = 12): string
-\`\`\`
+\`(length: number = 12): string\`
 
 生成随机字符串（默认长度为12位）
 
@@ -47,14 +39,14 @@ type random = (length: number = 12): string
 
 ## merge
 
+深层合并数据
+
 \`\`\`typescript
 type merge<T> = (
   data: any,      // 当前数据
   defaultData: T  // 默认值
 ) => T
 \`\`\`
-
-深层合并数据
 
 \`\`\`typescript
 merge(

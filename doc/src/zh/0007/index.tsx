@@ -2,9 +2,9 @@ import React from 'react'
 import { Article, Segment } from 'xueyan-react-markdown'
 
 const MARK1 = `
-> 用法不限于以下，此处仅作示范。
+> 用法不限，此处仅作示范。
 
-## 直接使用
+## useState 形式
 
 \`\`\`typescript
 interface FooData {
@@ -23,7 +23,7 @@ function Example() {
 }
 \`\`\`
 
-## 用 context 传递数据
+## context 形式
 
 \`\`\`typescript
 interface FooData {
@@ -87,11 +87,12 @@ function Child() {
 
 ## 推荐
 
-> 这样写代码量会多些，但相较于以上写法，程序的可扩展性和可维护性最好。
+> 代码量多些，但程序的可扩展性和可维护性高。
 
-1、新建 foo-store.tsx 文件，写入如下代码。
+1、定义
 
 \`\`\`typescript
+// foo.ts
 import { Store, useData, useStore, createProvider, merge } from 'xueyan-react-store'
 
 interface FooData {
@@ -130,7 +131,7 @@ export class FooStore extends Store<FooData> {
 }
 \`\`\`
 
-2、使用 foo-store.tsx
+2、使用
 
 \`\`\`typescript
 import { FooProvider } from './foo-store.tsx'
@@ -145,7 +146,7 @@ function Parent() {
 \`\`\`
 
 \`\`\`typescript
-import { useFooData, useFooStore } from './foo-store.tsx'
+import { useFooData, useFooStore } from './foo.ts'
 
 function Child() {
   const data = useFooData()

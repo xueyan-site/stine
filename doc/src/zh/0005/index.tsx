@@ -4,15 +4,17 @@ import { Article, Segment } from 'xueyan-react-markdown'
 const MARK1 = `
 ## ensureDataContext
 
+获取指定类型的 Store 数据上下文，若不存在则创建
+
 \`\`\`
 type ensureDataContext<S extends Store<any>> = (
   storeType: string
 ) => Context<S>
 \`\`\`
 
-获取指定类型的 Store 数据上下文，若不存在则创建。
-
 ## getDataContext
+
+获取指定类型的 Store 数据上下文
 
 \`\`\`
 type getDataContext<T>(
@@ -20,9 +22,9 @@ type getDataContext<T>(
 ) => Context<T> | undefined
 \`\`\`
 
-获取指定类型的 Store 数据上下文
-
 ## getStore
+
+获取指定的 Store
 
 \`\`\`
 type getStore<S extends Store<any>> = (
@@ -30,17 +32,15 @@ type getStore<S extends Store<any>> = (
 ) => S | undefined
 \`\`\`
 
-获取指定的 Store
-
 ## getStoreContext
+
+获取指定类型的 Store 上下文
 
 \`\`\`
 type getStoreContext<S extends Store<any>> = (
   storeType: string
 ) => Context<S> | undefined
 \`\`\`
-
-获取指定类型的 Store 上下文
 `
 
 export default function Main() {

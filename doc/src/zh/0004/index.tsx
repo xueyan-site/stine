@@ -12,7 +12,9 @@ type createProvider<S extends Store<any>, P = {}> = (
   React.PropsWithoutRef<React.PropsWithChildren<P>> 
   & RefAttributes<S>
 >
+\`\`\`
 
+\`\`\`
 type ProvideComponentProps<S extends Store<any>, P = {}> = P & {
   store: S
 }

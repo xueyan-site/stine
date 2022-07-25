@@ -8,7 +8,7 @@ module.exports = {
     'ast': 'pub/ast',
     'com': 'pub/com',
     'utl': 'pub/utl',
-    'xueyan-react-store': '../src'
+    'sdore': '../src'
   },
   serve: {
     port: 12013
@@ -44,14 +44,14 @@ module.exports = {
         key: 'favicon',
         rel: "icon",
         type: "image/png",
-        href: "{{XT_ASSETS_PATH}}favicon.png"
+        href: "{{P_ASSETS_PATH}}favicon.png"
       }
     ],
     styles: [
       {
         key: 'global',
         rel: 'stylesheet',
-        href: '{{XT_ASSETS_PATH}}global.css'
+        href: '{{P_ASSETS_PATH}}global.css'
       }
     ],
     scripts: [

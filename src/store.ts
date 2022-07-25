@@ -157,7 +157,7 @@ export class Store<T> extends EventEmitter {
   ): boolean {
     if (this.debug) {
       console.log(
-        `%c ${this.type} %c ${event}`,
+        `%c ${this.type} %c ${String(event)}`,
         'background:#000;color:#fff',
         'color:#f44',
         args

@@ -1,30 +1,30 @@
 {
-  "name": "xueyan-react-store",
-  "version": "2.2.4",
+  "name": "sdore",
+  "version": "1.0.0",
   "author": "xueyan-site <xueyan@xueyan.site>",
   "license": "LGPL-3.0",
   "description": "react state manage tool",
   "main": "dist/node",
   "types": "dist/def",
   "module": "dist/web",
+  "files": [
+    "dist/**/*"
+  ],
   "keywords": [
     "store",
+    "state",
     "react",
-    "xueyan",
     "context",
-    "component",
+    "xueyan",
     "typescript"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/xueyan-site/xueyan-react-store.git"
+    "url": "https://github.com/xueyan-site/sdore.git"
   },
-  "files": [
-    "dist/**/*"
-  ],
   "scripts": {
-    "start": "xt start",
-    "build": "xt build"
+    "dev": "sdin dev",
+    "build": "sdin build"
   },
   "dependencies": {
     "@babel/runtime": "^7.12.5",

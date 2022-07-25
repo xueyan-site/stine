@@ -93,7 +93,7 @@ function Child() {
 
 \`\`\`typescript
 // foo.ts
-import { Store, useData, useStore, createProvider, merge } from 'xueyan-react-store'
+import { Store, useData, useStore, createProvider, merge } from 'sdore'
 
 interface FooData {
   // ...

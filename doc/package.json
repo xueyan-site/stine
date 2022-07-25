@@ -1,13 +1,13 @@
 {
-  "name": "xueyan-react-store-doc",
+  "name": "sdore-doc",
   "version": "1.0.0",
   "author": "xueyan-site <xueyan@xueyan.site>",
-  "description": "xueyan-react-store document",
+  "description": "sdore document",
   "private": true,
   "scripts": {
-    "start": "xt start",
-    "build": "xt build",
-    "serve": "xt serve"
+    "dev": "sdin dev",
+    "build": "sdin build",
+    "serve": "sdin serve"
   },
   "dependencies": {
     "classnames": "^2.3.0",

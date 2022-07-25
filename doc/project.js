@@ -8,7 +8,7 @@ module.exports = {
     'ast': 'pub/ast',
     'com': 'pub/com',
     'utl': 'pub/utl',
-    'sdore': '../src'
+    'stine': '../src'
   },
   serve: {
     port: 12013

@@ -1,10 +1,10 @@
-# sdore
+# stine
 
 React state manage tool
 
 ## Document
 
-Please see <https://xueyan.site/sdore>.
+Please see <https://xueyan.site/stine>.
 
 ## Develop
 

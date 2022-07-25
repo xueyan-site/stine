@@ -1,5 +1,5 @@
 {
-  "name": "sdore",
+  "name": "stine",
   "version": "1.0.0",
   "author": "xueyan-site <xueyan@xueyan.site>",
   "license": "LGPL-3.0",
@@ -20,7 +20,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/xueyan-site/sdore.git"
+    "url": "https://github.com/xueyan-site/stine.git"
   },
   "scripts": {
     "dev": "sdin dev",

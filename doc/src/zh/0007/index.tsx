@@ -93,7 +93,7 @@ function Child() {
 
 \`\`\`typescript
 // foo.ts
-import { Store, useData, useStore, createProvider, merge } from 'sdore'
+import { Store, useData, useStore, createProvider, merge } from 'stine'
 
 interface FooData {
   // ...

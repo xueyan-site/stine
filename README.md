@@ -1,5 +1,7 @@
 # stine
 
+![stine](https://xueyan.site/stine/ast/project.png)
+
 React state manage tool
 
 ## Document

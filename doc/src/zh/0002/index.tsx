@@ -1,5 +1,5 @@
 import React from 'react'
-import { Article, Segment } from 'xueyan-react-markdown'
+import { Article, Segment } from 'ark-markdown'
 
 const MARK1 = `
 状态管理类，继承自 [EventEmitter3](https://github.com/primus/eventemitter3) （[文档](https://nodejs.org/api/events.html)）

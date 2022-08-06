@@ -1,5 +1,5 @@
 import React from 'react'
-import { Article, Segment } from 'xueyan-react-markdown'
+import { Article, Segment } from 'ark-markdown'
 
 const MARK1 = `
 \`React\` 状态管理器，内部对 \`react context\` 进行了简单封装，具备可扩展性，适用于复杂场景。  
